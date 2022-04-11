@@ -8,6 +8,6 @@ interface StockRepository {
     suspend fun getCompany(
         canFetchFromRemote: Boolean = false,
         query: String = String()
-    ) : FlowResultService<CompanyListingDomain>
+    ) : FlowResultService<List<CompanyListingDomain>>
 
 }
