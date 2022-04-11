@@ -1,4 +1,4 @@
-package com.lnsantos.stock.apresentation.company.listings
+package com.lnsantos.stock.apresentation.company.listings.esv
 
 import com.lnsantos.stock.domain.model.CompanyListingDomain
 

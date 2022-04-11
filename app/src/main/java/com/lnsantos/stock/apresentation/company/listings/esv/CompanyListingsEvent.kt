@@ -1,4 +1,4 @@
-package com.lnsantos.stock.apresentation.company.listings
+package com.lnsantos.stock.apresentation.company.listings.esv
 
 sealed class CompanyListingsEvent {
     object Refresh : CompanyListingsEvent()

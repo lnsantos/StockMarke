@@ -1,7 +1,6 @@
 package com.lnsantos.stock.data.repository
 
 import com.lnsantos.stock.data.csv.CSVParser
-import com.lnsantos.stock.data.csv.CompanyParser
 import com.lnsantos.stock.data.local.StockDatabase
 import com.lnsantos.stock.data.mapper.toDomain
 import com.lnsantos.stock.data.mapper.toEntity
@@ -9,14 +8,10 @@ import com.lnsantos.stock.data.remote.StockService
 import com.lnsantos.stock.domain.model.CompanyListingDomain
 import com.lnsantos.stock.domain.repository.StockRepository
 import com.lnsantos.stock.util.*
-import com.lnsantos.stock.util.ResultService.Loading
+import com.lnsantos.stock.util.emitFailed
 import com.lnsantos.stock.util.emitSuccess
-import com.lnsantos.stock.util.startLoading
 import com.lnsantos.stock.util.stopLoading
-import com.opencsv.CSVReader
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOf
-import java.io.InputStreamReader
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -38,6 +33,7 @@ class StockRepositoryImpl @Inject constructor(
             val dataLocal = dao.searchCompany(query)
             val dataDomain = dataLocal.map { it.toDomain() }
 
+            emit(ResultService.Success(dataDomain))
             emitSuccess(dataDomain)
 
             val isEmptyDataLocal = dataDomain.isEmpty() && query.isBlank()

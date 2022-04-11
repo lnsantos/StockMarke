@@ -1,13 +1,16 @@
-package com.lnsantos.stock.apresentation.company.listings
+package com.lnsantos.stock.apresentation.company.listings.esv
 
-import com.lnsantos.stock.apresentation.company.listings.CompanyListingsEvent
-import com.lnsantos.stock.apresentation.company.listings.CompanyListingsEvent.Refresh
-import com.lnsantos.stock.apresentation.company.listings.CompanyListingsEvent.OnSearchQueryChange
+import com.lnsantos.stock.apresentation.company.listings.esv.CompanyListingsEvent.Refresh
+import com.lnsantos.stock.apresentation.company.listings.esv.CompanyListingsEvent.OnSearchQueryChange
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lnsantos.stock.domain.repository.StockRepository
+import com.lnsantos.stock.util.isFailed
+import com.lnsantos.stock.util.isLoading
+import com.lnsantos.stock.util.isSuccess
 import com.lnsantos.stock.util.toCompanyListingState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -21,7 +24,7 @@ class CompanyListingsViewModel @Inject constructor(
     private val repository: StockRepository
 ) : ViewModel() {
 
-    val state by mutableStateOf(CompanyListingsState())
+    var state by mutableStateOf(CompanyListingsState())
     var searchJob: Job? = null
 
     fun onEvent(event: CompanyListingsEvent) {
@@ -33,8 +36,8 @@ class CompanyListingsViewModel @Inject constructor(
     }
 
     private fun searchQueryChange(query: String) {
-        searchJob?.cancel()
-        searchJob = null
+//        searchJob?.cancel()
+//        searchJob = null
         state.query = query
         searchJob = viewModelScope.launch {
             delay(500L)
@@ -46,15 +49,18 @@ class CompanyListingsViewModel @Inject constructor(
         query: String = state.query.lowercase(Locale.getDefault()),
         canFetchFromRemote: Boolean = false
     ) = viewModelScope.launch {
-
-        if (searchJob != null) {
-            searchJob?.cancel()
-        }
-
         repository.getCompany(
             canFetchFromRemote = canFetchFromRemote,
             query = query
-        ) toCompanyListingState state
+        ).also {
+            it.isSuccess { data ->
+                state = state.copy(data = data ?: arrayListOf())
+            }.isLoading { isLoading ->
+                state = state.copy(isLoading = isLoading)
+            }.isFailed { description ->
+                Unit
+            }
+        }
     }
 
 }
