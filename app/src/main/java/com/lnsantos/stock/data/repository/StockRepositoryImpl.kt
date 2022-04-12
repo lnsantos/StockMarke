@@ -33,7 +33,7 @@ class StockRepositoryImpl @Inject constructor(
             val dataLocal = dao.searchCompany(query)
             val dataDomain = dataLocal.map { it.toDomain() }
 
-            emit(ResultService.Success(dataDomain))
+            //emit(ResultService.Success(dataDomain))
             emitSuccess(dataDomain)
 
             val isEmptyDataLocal = dataDomain.isEmpty() && query.isBlank()
@@ -45,7 +45,7 @@ class StockRepositoryImpl @Inject constructor(
             }
 
             try {
-                val response = service.getListings(query)
+                val response = service.getListings()
                 val dataCompanyList = companyCsv.parser(response.byteStream())
 
                 if (dataCompanyList.isEmpty()) {

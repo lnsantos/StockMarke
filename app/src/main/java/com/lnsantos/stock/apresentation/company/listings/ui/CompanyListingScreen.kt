@@ -24,11 +24,13 @@ fun CompanyListingsScreen(
         isRefreshing = viewModel.state.isRefresh
     )
 
+    val state = viewModel.state
+
     Column(
         modifier = Modifier.fillMaxWidth(),
     ) {
         SearchTextField(
-            value = viewModel.state.query,
+            value = state.query,
             setChangeValue = { newQuery ->
                 viewModel.onEvent(OnSearchQueryChange(newQuery))
             }
@@ -38,7 +40,8 @@ fun CompanyListingsScreen(
             swipeRefreshState = swipeRefreshState,
             swipeOnRefresh = { viewModel.onEvent(Refresh) },
             itemClicked = {  },
-            modifier = Modifier.fillMaxHeight().fillMaxWidth()
+            modifier = Modifier.fillMaxHeight().fillMaxWidth(),
+            data = state.data
         )
     }
 }

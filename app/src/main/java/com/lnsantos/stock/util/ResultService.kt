@@ -2,12 +2,13 @@ package com.lnsantos.stock.util
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.FlowCollector
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
 
 typealias FlowResultService<T> = Flow<ResultService<T>>
 
-fun <T> FlowResultService<T>.isLoading(action: (isLoading: Boolean) -> Unit): FlowResultService<T> {
-    map {
+suspend fun <T> FlowResultService<T>.isLoading(action: (isLoading: Boolean) -> Unit): FlowResultService<T> {
+    collect {
         if (it is ResultService.Loading) {
             action(it.isLoading)
         }
@@ -15,8 +16,8 @@ fun <T> FlowResultService<T>.isLoading(action: (isLoading: Boolean) -> Unit): Fl
     return this
 }
 
-fun <T> FlowResultService<T>.isSuccess(action: (data: T?) -> Unit): FlowResultService<T> {
-    map {
+suspend fun <T> FlowResultService<T>.isSuccess(action: (data: T?) -> Unit): FlowResultService<T> {
+    collect {
         if (it is ResultService.Success) {
             action(it._data)
         }
@@ -24,8 +25,8 @@ fun <T> FlowResultService<T>.isSuccess(action: (data: T?) -> Unit): FlowResultSe
     return this
 }
 
-fun <T> FlowResultService<T>.isFailed(action: (description: String?) -> Unit): FlowResultService<T> {
-    map {
+suspend fun <T> FlowResultService<T>.isFailed(action: (description: String?) -> Unit): FlowResultService<T> {
+    collect {
         if (it is ResultService.Failed) {
              action(it.description)
         }
